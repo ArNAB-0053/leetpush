@@ -2,7 +2,6 @@ import type { GitHubSettings } from "../types/settings"
 import type { ProblemData } from "../types/problem"
 import type { SubmissionMetadata } from "../types/metadata"
 import { DEFAULT_GITHUB_SETTINGS } from "../constants/settings"
-import { normalizeBaseDirectory } from "../utils/path"
 
 export interface ActiveSession {
   startedAt: string
@@ -176,7 +175,8 @@ export const storageService = {
     if (!isExtensionContextActive()) {
       const settings = mockStore[STORAGE_KEYS.GITHUB_SETTINGS] || DEFAULT_GITHUB_SETTINGS
       if (settings) {
-        settings.rootPath = normalizeBaseDirectory(settings.rootPath || "")
+        settings.leetcodeDir = settings.leetcodeDir || "LeetCode"
+        settings.geeksforgeeksDir = settings.geeksforgeeksDir || "GeeksForGeeks"
       }
       return settings
     }
@@ -190,7 +190,8 @@ export const storageService = {
           } else {
             const settings = result[STORAGE_KEYS.GITHUB_SETTINGS] || DEFAULT_GITHUB_SETTINGS
             if (settings) {
-              settings.rootPath = normalizeBaseDirectory(settings.rootPath || "")
+              settings.leetcodeDir = settings.leetcodeDir || "LeetCode"
+              settings.geeksforgeeksDir = settings.geeksforgeeksDir || "GeeksForGeeks"
             }
             resolve(settings)
           }

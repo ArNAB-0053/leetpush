@@ -2,7 +2,6 @@ import { getOctokitClient } from "./github.client"
 import type { GitHubSettings } from "../types/settings"
 import type { SubmissionMetadata } from "../types/metadata"
 import type { Octokit } from "@octokit/rest"
-import { normalizeBaseDirectory } from "../utils/path"
 
 /**
  * Resolves repository string (handles both "owner/repo" and "repo" inputs).
@@ -107,12 +106,11 @@ export const githubService = {
         ? `${metadata.id}-${metadata.slug}`
         : metadata.slug
         
-      const platformDir = metadata.platform === "leetcode" ? "LeetCode" : "GeeksForGeeks"
-      const baseDir = normalizeBaseDirectory(settings.rootPath || "")
+      const platformDir = metadata.platform === "leetcode"
+        ? (settings.leetcodeDir || "LeetCode")
+        : (settings.geeksforgeeksDir || "GeeksForGeeks")
       
-      const folderPath = baseDir
-        ? `${baseDir}/${platformDir}/${folderName}`
-        : `${platformDir}/${folderName}`
+      const folderPath = `${platformDir}/${folderName}`
       
       // 1. Push solution code file
       const fileExt = getFileExtension(metadata.language)

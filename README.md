@@ -88,18 +88,23 @@ octocat/my-solutions
 
 Click **Test Connection** to verify access.
 
-### Configure Base Directory (Optional)
+### Configure Directories & Paths
 
 Kepr automatically structures solutions by platform inside your repository:
 
-- **Without Base Directory (Default)**: Solutions are synced directly to:
-  - LeetCode: `LeetCode/<problem-slug>/`
-  - GeeksForGeeks: `GeeksForGeeks/<problem-slug>/`
-- **With Base Directory (e.g. `DSA` or `Problems`)**: Solutions are synced to:
-  - LeetCode: `DSA/LeetCode/<problem-slug>/`
-  - GeeksForGeeks: `DSA/GeeksForGeeks/<problem-slug>/`
+- **LeetCode Directory**: Custom folder name for LeetCode solutions (default: `LeetCode`).
+- **GeeksForGeeks Directory**: Custom folder name for GeeksForGeeks solutions (default: `GeeksForGeeks`).
 
-*Note: Existing configuration entries such as `DSA/LeetCode` or `LeetCode` will be automatically migrated to prevent path duplication (e.g. `DSA/LeetCode` is normalized to `DSA`, maintaining your folder structure exactly as-is).*
+#### Folder Structures
+
+With **LeetCode Directory** = `LC` and **GeeksForGeeks Directory** = `GFG`:
+```text
+LC/
+└── <problem-slug>/
+
+GFG/
+└── <problem-slug>/
+```
 
 Click **Save Settings** to persist the configuration.
 
