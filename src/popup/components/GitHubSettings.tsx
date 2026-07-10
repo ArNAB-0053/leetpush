@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Eye, EyeOff, Key, FolderGit2, FolderClosed, CheckCircle2, XCircle, RefreshCw } from "lucide-react"
 import type { GitHubSettings as SettingsType } from "~lib/types/settings"
+import { sanitizePath, normalizeBaseDirectory } from "~lib/utils/path"
 
 interface GitHubSettingsProps {
   initialSettings: SettingsType
@@ -18,8 +19,9 @@ export const GitHubSettings: React.FC<GitHubSettingsProps> = ({
 }) => {
   const [pat, setPat] = useState("")
   const [repo, setRepo] = useState("")
-  const [rootPath, setRootPath] = useState("DSA/LeetCode")
+  const [rootPath, setRootPath] = useState("")
   const [showPat, setShowPat] = useState(false)
+  const [pathError, setPathError] = useState<string | null>(null)
   
   const [testStatus, setTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle")
   const [testError, setTestError] = useState<string | null>(null)
@@ -28,18 +30,32 @@ export const GitHubSettings: React.FC<GitHubSettingsProps> = ({
   useEffect(() => {
     setPat(initialSettings.pat)
     setRepo(initialSettings.repo)
-    setRootPath(initialSettings.rootPath)
+    setRootPath(initialSettings.rootPath || "")
   }, [initialSettings])
 
   const handleSave = () => {
+    const normalized = normalizeBaseDirectory(rootPath)
+    const sanitized = sanitizePath(normalized)
     onSave({
       pat: pat.trim(),
       repo: repo.trim(),
-      rootPath: rootPath.trim(),
+      rootPath: sanitized,
       isConfigured: pat.trim() !== "" && repo.trim() !== "",
     })
+    setRootPath(sanitized)
+    setPathError(null)
     setSaveStatus("saved")
     setTimeout(() => setSaveStatus("idle"), 2500)
+  }
+
+  const handleRootPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    if (/[\\:*?"<>|]/.test(val)) {
+      setPathError("Path contains invalid characters (\\ : * ? \" < > |)")
+    } else {
+      setPathError(null)
+    }
+    setRootPath(val)
   }
 
   const handleTest = async () => {
@@ -104,19 +120,22 @@ export const GitHubSettings: React.FC<GitHubSettingsProps> = ({
           />
         </div>
 
-        {/* Root Path */}
+        {/* Base Directory */}
         <div className="space-y-1.5">
           <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
             <FolderClosed size={12} />
-            Root Directory Path
+            Base Directory
           </label>
           <input
             type="text"
             value={rootPath}
-            onChange={(e) => setRootPath(e.target.value)}
-            placeholder="e.g. DSA/LeetCode"
+            onChange={handleRootPathChange}
+            placeholder="e.g. Problems or DSA (optional)"
             className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-xs placeholder:text-muted-foreground/60"
           />
+          {pathError && (
+            <p className="text-[10px] text-rose-400 font-medium mt-0.5">{pathError}</p>
+          )}
         </div>
       </div>
 

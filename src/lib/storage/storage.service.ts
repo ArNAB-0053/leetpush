@@ -2,6 +2,7 @@ import type { GitHubSettings } from "../types/settings"
 import type { ProblemData } from "../types/problem"
 import type { SubmissionMetadata } from "../types/metadata"
 import { DEFAULT_GITHUB_SETTINGS } from "../constants/settings"
+import { normalizeBaseDirectory } from "../utils/path"
 
 export interface ActiveSession {
   startedAt: string
@@ -173,7 +174,11 @@ export const storageService = {
    */
   async getGitHubSettings(): Promise<GitHubSettings> {
     if (!isExtensionContextActive()) {
-      return mockStore[STORAGE_KEYS.GITHUB_SETTINGS] || DEFAULT_GITHUB_SETTINGS
+      const settings = mockStore[STORAGE_KEYS.GITHUB_SETTINGS] || DEFAULT_GITHUB_SETTINGS
+      if (settings) {
+        settings.rootPath = normalizeBaseDirectory(settings.rootPath || "")
+      }
+      return settings
     }
 
     return new Promise((resolve) => {
@@ -183,7 +188,11 @@ export const storageService = {
             console.error("[Kepr] getGitHubSettings error:", chrome.runtime.lastError.message)
             resolve(DEFAULT_GITHUB_SETTINGS)
           } else {
-            resolve(result[STORAGE_KEYS.GITHUB_SETTINGS] || DEFAULT_GITHUB_SETTINGS)
+            const settings = result[STORAGE_KEYS.GITHUB_SETTINGS] || DEFAULT_GITHUB_SETTINGS
+            if (settings) {
+              settings.rootPath = normalizeBaseDirectory(settings.rootPath || "")
+            }
+            resolve(settings)
           }
         })
       } catch (error) {

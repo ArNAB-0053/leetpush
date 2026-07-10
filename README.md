@@ -10,13 +10,13 @@ Automatically sync accepted coding solutions, notes, and metadata to GitHub.
 
 ## Features
 
-- **Automatic Solution Syncing**: Instantly pushes accepted code submissions to your GitHub repository without interrupting your solving workflow.
+- **Multi-Platform Support**: Automatically detects and syncs solutions from both LeetCode and GeeksForGeeks (GFG).
 - **GitHub Integration**: Direct communication with the GitHub API using personal access tokens (PAT) for custom repository sync paths.
 - **Problem Notes**: Keep track of key findings, edge cases, and learnings by appending revision notes to each problem path.
-- **Submission Metadata Tracking**: Captures and saves detailed runtime metrics, memory usage, language, difficulty, timestamps, and other submission details in a structured `metadata.json` file.
+- **Submission Metadata Tracking**: Captures and saves detailed runtime metrics, memory usage, language, difficulty, company tags (for GFG), timestamps, and other submission details in a structured `metadata.json` file.
 - **Session Tracking**: Measures active focus time spent solving problems and stores it alongside each solution.
 - **Local Storage Fallback**: Gracefully caches configuration and session data using Chrome storage to prevent data loss.
-- **Future Platform Support**: Built with a modular architecture that can be extended beyond LeetCode to additional coding platforms.
+- **Modular Platform Abstraction**: Built on a platform-agnostic adapter architecture that makes adding new coding platforms simple.
 
 ---
 
@@ -88,21 +88,18 @@ octocat/my-solutions
 
 Click **Test Connection** to verify access.
 
-### Configure Root Path
+### Configure Base Directory (Optional)
 
-Optionally specify a directory inside your repository:
+Kepr automatically structures solutions by platform inside your repository:
 
-```text
-DSA/LeetCode
-```
+- **Without Base Directory (Default)**: Solutions are synced directly to:
+  - LeetCode: `LeetCode/<problem-slug>/`
+  - GeeksForGeeks: `GeeksForGeeks/<problem-slug>/`
+- **With Base Directory (e.g. `DSA` or `Problems`)**: Solutions are synced to:
+  - LeetCode: `DSA/LeetCode/<problem-slug>/`
+  - GeeksForGeeks: `DSA/GeeksForGeeks/<problem-slug>/`
 
-or
-
-```text
-Solutions
-```
-
-If left empty, solutions will be synced directly to the repository root.
+*Note: Existing configuration entries such as `DSA/LeetCode` or `LeetCode` will be automatically migrated to prevent path duplication (e.g. `DSA/LeetCode` is normalized to `DSA`, maintaining your folder structure exactly as-is).*
 
 Click **Save Settings** to persist the configuration.
 
@@ -195,7 +192,7 @@ This folder can be packaged and distributed manually or attached to GitHub Relea
 
 ## Roadmap
 
-- Support additional coding platforms (Codeforces, HackerRank, GeeksforGeeks, etc.)
+- Support additional coding platforms (Codeforces, HackerRank, etc. - LeetCode and GeeksForGeeks are supported!)
 - Enhanced metadata tracking and analytics
 - Repository bootstrap templates
 - Progress dashboards and insights
